@@ -18,6 +18,7 @@ import { codexLoginCommand } from "./commands/codex-login.js";
 import { imageCommand } from "./commands/images.js";
 import { loginCommand } from "./commands/login.js";
 import { logoutCommand } from "./commands/logout.js";
+import { mountCommand } from "./commands/mount.js";
 import { sharesCommand } from "./commands/shares.js";
 import { snapshotCommand } from "./commands/snapshots.js";
 import { upgradeCommand } from "./commands/upgrade.js";
@@ -78,6 +79,7 @@ function formatRootHelp(cmd: Command): string {
 		["Computers", [] as HelpEntry[]],
 		["Images", [] as HelpEntry[]],
 		["Access", [] as HelpEntry[]],
+		["Mounts", [] as HelpEntry[]],
 		["Shares", [] as HelpEntry[]],
 		["Snapshots", [] as HelpEntry[]],
 		["Other", [] as HelpEntry[]],
@@ -106,10 +108,12 @@ function formatRootHelp(cmd: Command): string {
 			groups[2][1].push(entry);
 		} else if (["open", "ssh", "sync", "ports"].includes(name)) {
 			groups[3][1].push(entry);
-		} else if (name === "shares") {
+		} else if (name === "mount") {
 			groups[4][1].push(entry);
-		} else if (name === "snapshot") {
+		} else if (name === "shares") {
 			groups[5][1].push(entry);
+		} else if (name === "snapshot") {
+			groups[6][1].push(entry);
 		} else {
 			otherGroup.push(entry);
 		}
@@ -203,6 +207,7 @@ program.addCommand(sshCommand);
 program.addCommand(sshProxyCommand, { hidden: true });
 program.addCommand(syncCommand);
 program.addCommand(portsCommand);
+program.addCommand(mountCommand);
 program.addCommand(sharesCommand);
 program.addCommand(snapshotCommand);
 program.addCommand(removeCommand);

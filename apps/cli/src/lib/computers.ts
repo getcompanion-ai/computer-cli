@@ -4,6 +4,8 @@ import {
 	type ComputerConnection,
 	type ComputerImageResponse,
 	type ComputerResponse,
+	type CreateFuseMountRequest,
+	type FuseMountResponse,
 	type OperationResponse,
 	type PublishedPortResponse,
 	type ShareResponse,
@@ -320,6 +322,32 @@ export async function createLinkShare(
 export async function deleteShare(computerID: string, shareID: string): Promise<void> {
 	const client = getPublicApiClient();
 	await client.deleteLinkShare(computerID, shareID);
+}
+
+export type FuseMount = FuseMountResponse;
+
+export async function listFuseMounts(computerID: string): Promise<FuseMount[]> {
+	const response = await getPublicApiClient().listFuseMounts(computerID);
+	return response.mounts;
+}
+
+export async function createFuseMount(
+	computerID: string,
+	input: CreateFuseMountRequest,
+): Promise<FuseMount> {
+	const client = getPublicApiClient();
+	const response = await client.createFuseMount(computerID, input);
+	await waitForOperationIfPresent(response.operation);
+	const mounts = await listFuseMounts(computerID);
+	return mounts.find((mount) => mount.id === response.mount.id) ?? response.mount;
+}
+
+export async function deleteFuseMount(computerID: string, mountID: string): Promise<FuseMount> {
+	const client = getPublicApiClient();
+	const response = await client.deleteFuseMount(computerID, mountID);
+	await waitForOperationIfPresent(response.operation);
+	const mounts = await listFuseMounts(computerID);
+	return mounts.find((mount) => mount.id === response.mount.id) ?? response.mount;
 }
 
 export async function transferComputer(

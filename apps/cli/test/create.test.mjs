@@ -59,7 +59,8 @@ test("computer help exposes only the active command tree", () => {
 	assert.match(result.stdout, /create/);
 	assert.match(result.stdout, /image/);
 	assert.match(result.stdout, /ports/);
-	for (const command of ["agent", "acp", "mount"]) {
+	assert.match(result.stdout, /mount/);
+	for (const command of ["agent", "acp"]) {
 		assert.doesNotMatch(result.stdout, new RegExp(`\\b${escapeRegExp(command)}\\b`));
 	}
 });

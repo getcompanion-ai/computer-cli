@@ -34,6 +34,9 @@ export type SnapshotMutationResponse = PublicApiSchemas["SnapshotMutationRespons
 export type PublishedPortResponse = PublicApiSchemas["PublishedPortResponse"];
 export type ListPublishedPortsResponse = PublicApiSchemas["ListPublishedPortsResponse"];
 export type PublishedPortMutationResponse = PublicApiSchemas["PublishedPortMutationResponse"];
+export type FuseMountResponse = PublicApiSchemas["FuseMountResponse"];
+export type ListFuseMountsResponse = PublicApiSchemas["ListFuseMountsResponse"];
+export type FuseMountMutationResponse = PublicApiSchemas["FuseMountMutationResponse"];
 export type ExecCommandRequest = PublicApiSchemas["ExecCommandRequest"];
 export type ExecCommandResponse = PublicApiSchemas["ExecCommandResponse"];
 export type CreateComputerRequest = PublicApiSchemas["CreateComputerRequest"];
@@ -47,6 +50,7 @@ export type CreateLinkShareRequest = PublicApiSchemas["CreateLinkShareRequest"];
 export type TransferComputerRequest = PublicApiSchemas["TransferComputerRequest"];
 export type RestoreSnapshotRequest = PublicApiSchemas["RestoreSnapshotRequest"];
 export type CreatePublishedPortRequest = PublicApiSchemas["CreatePublishedPortRequest"];
+export type CreateFuseMountRequest = PublicApiSchemas["CreateFuseMountRequest"];
 
 export type ComputerFileEntry = {
   path: string;
@@ -588,6 +592,22 @@ export function createPublicApiClient(options: PublicApiClientOptions) {
     },
     async deletePublishedPort(computerId: string, port: number, signal?: AbortSignal): Promise<PublishedPortMutationResponse> {
       return request<PublishedPortMutationResponse>(`/v1/computers/${encodeURIComponent(computerId)}/ports/${encodeURIComponent(String(port))}`, {
+        method: "DELETE",
+        signal,
+      });
+    },
+    async listFuseMounts(computerId: string, signal?: AbortSignal): Promise<ListFuseMountsResponse> {
+      return request<ListFuseMountsResponse>(`/v1/computers/${encodeURIComponent(computerId)}/mounts`, { signal });
+    },
+    async createFuseMount(computerId: string, body: CreateFuseMountRequest, signal?: AbortSignal): Promise<FuseMountMutationResponse> {
+      return request<FuseMountMutationResponse>(`/v1/computers/${encodeURIComponent(computerId)}/mounts`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        signal,
+      });
+    },
+    async deleteFuseMount(computerId: string, mountId: string, signal?: AbortSignal): Promise<FuseMountMutationResponse> {
+      return request<FuseMountMutationResponse>(`/v1/computers/${encodeURIComponent(computerId)}/mounts/${encodeURIComponent(mountId)}`, {
         method: "DELETE",
         signal,
       });

@@ -348,6 +348,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/computers/{computer_id}/mounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List FUSE mounts for a computer. */
+        get: operations["listFuseMounts"];
+        put?: never;
+        /** Queue a FUSE mount create. */
+        post: operations["createFuseMount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/computers/{computer_id}/mounts/{mount_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Queue a FUSE mount delete. */
+        delete: operations["deleteFuseMount"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/computers/{computer_id}/ports": {
         parameters: {
             query?: never;
@@ -843,6 +878,18 @@ export interface components {
                 snapshot_id?: string;
             };
         };
+        CreateFuseMountRequest: {
+            access_key_id: string;
+            bucket: string;
+            endpoint?: string;
+            /** @enum {string} */
+            kind: "r2" | "s3" | "gcs" | "webdav";
+            read_only?: boolean;
+            region?: string;
+            secret_access_key: string;
+            target_path: string;
+            vfs_cache_mode?: string;
+        };
         CreateLinkShareRequest: {
             allow_browser?: boolean;
             allow_vnc?: boolean;
@@ -888,6 +935,29 @@ export interface components {
             stderr: string;
             stdout: string;
         };
+        FuseMountMutationResponse: {
+            mount: components["schemas"]["FuseMountResponse"];
+            operation?: components["schemas"]["OperationResponse"];
+        };
+        FuseMountResponse: {
+            bucket: string;
+            computer_id: string;
+            /** Format: date-time */
+            created_at: string;
+            endpoint?: string;
+            failure_reason?: string | null;
+            id: string;
+            /** @enum {string} */
+            kind: "r2" | "s3" | "gcs" | "webdav";
+            read_only: boolean;
+            region?: string;
+            /** @enum {string} */
+            state: "pending" | "mounting" | "mounted" | "failed" | "deleting";
+            target_path: string;
+            /** Format: date-time */
+            updated_at: string;
+            vfs_cache_mode: string;
+        };
         GetComputerImageResponse: {
             image: components["schemas"]["ComputerImageResponse"];
         };
@@ -902,6 +972,9 @@ export interface components {
         };
         ListComputersResponse: {
             computers: components["schemas"]["ComputerResponse"][];
+        };
+        ListFuseMountsResponse: {
+            mounts: components["schemas"]["FuseMountResponse"][];
         };
         ListPublishedPortsResponse: {
             ports: components["schemas"]["PublishedPortResponse"][];
@@ -1902,6 +1975,104 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    listFuseMounts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                computer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description FUSE mounts response. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListFuseMountsResponse"];
+                };
+            };
+            /** @description Error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    createFuseMount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                computer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFuseMountRequest"];
+            };
+        };
+        responses: {
+            /** @description FUSE mount create accepted. */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FuseMountMutationResponse"];
+                };
+            };
+            /** @description Error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    deleteFuseMount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                computer_id: string;
+                mount_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description FUSE mount delete accepted. */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FuseMountMutationResponse"];
+                };
             };
             /** @description Error response. */
             default: {
